@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "express": "^4.21.0"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.7.0"
   },
   "name": "pt1",
   "version": "1.0.0",
