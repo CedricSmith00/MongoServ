@@ -8,7 +8,24 @@ const Book = require("./db/models/bookmodel");
 
 // Get a single book
 app.get("/getSingleBook", async (req, res) => {
-    // Use mongoose find one
+    try {
+        const { title } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ message: "Title is required"});
+        }
+        
+        const book = await Book.findOne({title: title});
+
+        if (!book) {
+            return res.status(404).json({message: `${title} not found`})
+        }
+        res.status(200).json(book);
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: "An error occured", error: error.message});
+    }
 });
 
 // Delete a book
@@ -73,7 +90,33 @@ app.put("/updateGenre", async (req, res) => {
 
 // Update author
 app.put("/updateAuthor", async (req, res) => {
-    // Use mongoose updateOne
+    try {
+        const {title, newAuthor } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ message: "Title is required"});
+        }
+
+        if (!newAuthor) {
+            return res.status(400).json({message: "New author is required"});
+        }
+
+        const result = await Book.updateOne(
+            {title: title },
+            {author: newAuthor}
+        );
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({message: `${title} not found or author is the same`});
+        }
+
+        res.status(200).json({message: `Author updated to ${newAuthor} for ${title}`});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Could not update author",
+            DBresponse: error.message
+        })
+    }
 });
 
 // List all books
