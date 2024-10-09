@@ -1,26 +1,89 @@
 require("dotenv").config();
-require("./db/connection")
+require("./db/connection");
 const express = require("express");
 const app = express();
 app.use(express.json());
 
-const Health = require("./db/models/bookmodel")
+const Book = require("./db/models/bookmodel");
 
-app.post("/health", async (req, res) => {
-    console.log("req body: ", req.body);
-
-    const result = await Health.create({
-        health: req.body.health
-    });
-    console.log(`result: ${result}`)
-
-    const successResponse = {
-        message: "Health Successfully displayed"
-    };
-    res.status(201).send(successResponse);
+// Get a single book
+app.get("/getSingleBook", async (req, res) => {
+    // Use mongoose find one
 });
- 
-app.get("/health", (req,res) => {res.send("API is healthy")})
- 
-const port = process.env.PORT;
-app.listen(5001, () => {console.log(`server is listening on port ${port}`)});
+
+// Delete a book
+app.delete("/deleteBook", async (req, res) => {
+    try {
+        const { title } = req.body; 
+        console.log("Sent Title:", title); 
+
+        if (!title) {
+            return res.status(400).json({ message: "Title is required" });
+        }
+
+        // Delete the book with the specified title
+        const result = await Book.deleteOne({ title: title });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: `${title} not found` });
+        }
+
+        // Success response
+        res.status(200).json({ message: `${title} has been deleted` });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Could not delete",
+            DBresponse: error.message
+        });
+    }
+});
+
+// Update genre
+app.put("/updateGenre", async (req, res) => {
+    // Use mongoose updateOne
+});
+
+// Update author
+app.put("/updateAuthor", async (req, res) => {
+    // Use mongoose updateOne
+});
+
+// List all books
+app.get("/listBooks", async (req, res) => {
+    try {
+        const books = await Book.find({}); // Retrieve all books from the database
+        res.status(200).json(books); // Send the list of books as a JSON response
+    } catch (error) {
+        console.log(error); 
+        res.status(500).json({
+            message: "Unable to retrieve book list" // Send an error message if something goes wrong
+        });
+    }
+});
+
+// Add a new book
+app.post("/addBook", async (req, res) => {
+    try {
+        const result = await Book.create({
+            title: req.body.title,
+            author: req.body.author,
+            genre: req.body.genre
+        });
+        console.log(result); 
+        res.status(201).json({
+            message: `Book '${req.body.title}' has been added`
+        });
+    } catch (error) {
+        console.log(error); 
+        res.status(500).json({
+            message: `Book '${req.body.title}' was not added`,
+            DBresponse: error.message
+        });
+    }
+});
+
+const port = process.env.PORT || 5001;
+app.listen(port, () => {
+    console.log(`Server is listening on port ${port}`);
+});

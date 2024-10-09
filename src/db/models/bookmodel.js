@@ -1,12 +1,20 @@
 const mongoose = require("mongoose");
 
-const healthSchema = new mongoose.Schema({
-    health: {
+const bookSchema = new mongoose.Schema({
+    title: {
         type: String,
         require: true,
         unique: true
+    },
+    autthor: {
+        type:String,
+        require:true
+    },
+    genre: {
+        type: String,
+        require:true
     }
 });
 
-const Health =mongoose.model("health", healthSchema);
-module.exports = Health;
+const Book =mongoose.model("book", bookSchema);
+module.exports = Book;
