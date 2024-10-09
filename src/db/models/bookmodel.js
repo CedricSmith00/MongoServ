@@ -6,7 +6,7 @@ const bookSchema = new mongoose.Schema({
         require: true,
         unique: true
     },
-    autthor: {
+    author: {
         type:String,
         require:true
     },

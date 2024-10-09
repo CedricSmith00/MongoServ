@@ -15,7 +15,6 @@ app.get("/getSingleBook", async (req, res) => {
 app.delete("/deleteBook", async (req, res) => {
     try {
         const { title } = req.body; 
-        console.log("Sent Title:", title); 
 
         if (!title) {
             return res.status(400).json({ message: "Title is required" });
@@ -41,8 +40,36 @@ app.delete("/deleteBook", async (req, res) => {
 
 // Update genre
 app.put("/updateGenre", async (req, res) => {
-    // Use mongoose updateOne
+    try {
+        const {title, newGenre } = req.body;
+
+        if (!title) {
+            return res.status(400).json({ message: "Title is required"});
+        }
+
+        if (!newGenre) {
+            return res.status(400).json({message: "New genre is required"});
+        }
+
+        const result = await Book.updateOne(
+            {title: title },
+            {genre: newGenre}
+        );
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({message: `${title} not found or genre is the same`});
+        }
+
+        res.status(200).json({message: `Genre updated to ${newGenre} for ${title}`});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Could not update genre",
+            DBresponse: error.message
+        })
+    }
 });
+        
+       
 
 // Update author
 app.put("/updateAuthor", async (req, res) => {
