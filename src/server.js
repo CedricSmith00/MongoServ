@@ -37,14 +37,12 @@ app.delete("/deleteBook", async (req, res) => {
             return res.status(400).json({ message: "Title is required" });
         }
 
-        // Delete the book with the specified title
         const result = await Book.deleteOne({ title: title });
 
         if (result.deletedCount === 0) {
             return res.status(404).json({ message: `${title} not found` });
         }
 
-        // Success response
         res.status(200).json({ message: `${title} has been deleted` });
     } catch (error) {
         console.log(error);
@@ -122,12 +120,12 @@ app.put("/updateAuthor", async (req, res) => {
 // List all books
 app.get("/listBooks", async (req, res) => {
     try {
-        const books = await Book.find({}); // Retrieve all books from the database
-        res.status(200).json(books); // Send the list of books as a JSON response
+        const books = await Book.find({}); 
+        res.status(200).json(books); 
     } catch (error) {
         console.log(error); 
         res.status(500).json({
-            message: "Unable to retrieve book list" // Send an error message if something goes wrong
+            message: "Unable to retrieve book list" 
         });
     }
 });
