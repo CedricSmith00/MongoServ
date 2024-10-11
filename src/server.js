@@ -140,12 +140,12 @@ app.post("/addBook", async (req, res) => {
         });
         console.log(result); 
         res.status(201).json({
-            message: `Book '${req.body.title}' has been added`
+            message: `Book '${title}' has been added`
         });
     } catch (error) {
         console.log(error); 
         res.status(500).json({
-            message: `Book '${req.body.title}' was not added`,
+            message: `Book '${title}' was not added`,
             DBresponse: error.message
         });
     }
